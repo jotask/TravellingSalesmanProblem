@@ -30,12 +30,12 @@ public class World {
     public void reset(){
         this.cities.clear();
         for(int i = 0; i < CITIES; i++){
-            final City city = getCity(i);
+            final City city = createCity(i);
             cities.push(city);
         }
     }
 
-    private City getCity(final int id){
+    private City createCity(final int id){
 
         final OrthographicCamera cam = this.prime.getCam();
         final float WEIGHT = cam.viewportWidth;
@@ -69,6 +69,15 @@ public class World {
         }
 
         return new City(id, p);
+    }
+
+    public City getCity(final int id){
+        for(final City c: this.getCities()){
+            if(id == c.getId()){
+                return c;
+            }
+        }
+        return null;
     }
 
     public void render(final ShapeRenderer sr){

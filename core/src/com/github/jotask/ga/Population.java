@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.github.jotask.world.City;
+import com.github.jotask.world.World;
 
 import java.util.LinkedList;
 
@@ -28,12 +29,12 @@ public class Population {
 
     private Genome always;
 
-    private final LinkedList<City> cities;
+    private final World world;
 
-    public Population(final LinkedList<City> cities){
-        this.cities = cities;
+    public Population(final World world){
+        this.world = world;
         this.genes = new LinkedList<Genome>();
-        this.fitness = new Fitness(this.cities);
+        this.fitness = new Fitness(world);
     }
 
     public void reset(){
@@ -41,11 +42,13 @@ public class Population {
     }
 
     public void init(){
+        this.best = null;
+        this.always = null;
         this.generation = 0;
         this.genes.clear();
         int POPULATION = 300;
         for(int i = 0; i < POPULATION; i++){
-            final Genome genome = new Genome(this.cities);
+            final Genome genome = new Genome(world.getCities());
             this.genes.push(genome);
         }
     }
@@ -97,8 +100,8 @@ public class Population {
         {
             final LinkedList<Integer> order = this.always.getOrder();
             for (int i = 1; i < order.size(); i++) {
-                final City a = getCity(order.get(i - 1));
-                final City b = getCity(order.get(i));
+                final City a = this.world.getCity(order.get(i - 1));
+                final City b = this.world.getCity(order.get(i));
                 final Vector2 z = a.getPoint();
                 final Vector2 x = b.getPoint();
                 sr.rectLine(z.x, z.y, x.x, x.y, 15, a.getColor(), b.getColor());
@@ -109,8 +112,8 @@ public class Population {
             sr.setColor(Color.BLACK);
             final LinkedList<Integer> order = this.best.getOrder();
             for (int i = 1; i < order.size(); i++) {
-                final Vector2 a = getCity(order.get(i - 1)).getPoint();
-                final Vector2 b = getCity(order.get(i)).getPoint();
+                final Vector2 a = this.world.getCity(order.get(i - 1)).getPoint();
+                final Vector2 b = this.world.getCity(order.get(i)).getPoint();
                 sr.rectLine(a, b, 3);
             }
         }
@@ -145,15 +148,6 @@ public class Population {
         final double fitness = Math.max(mother.fitness, father.fitness);
         return new Genome(fitness, child);
 
-    }
-
-    private City getCity(final int id){
-        for(final City c: this.cities){
-            if(id == c.getId()){
-                return c;
-            }
-        }
-        return null;
     }
 
     public int getGeneration() { return generation; }

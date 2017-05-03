@@ -47,7 +47,7 @@ public class OptimusPrime extends ApplicationAdapter {
 		this.cam.position.set(this.cam.viewportWidth / 2f,this.cam.viewportHeight / 2f, 0);
 
 		this.world = new World(this);
-		this.pop = new Population(this.world.getCities());
+		this.pop = new Population(this.world);
 
 		this.gui = new Gui(this);
 
