@@ -26,6 +26,11 @@ public class Genome {
         this.shuffle(MathUtils.random(5, 50));
     }
 
+    public Genome(final double fitness, final LinkedList<Integer> order){
+        this.fitness = fitness;
+        this.order = order;
+    }
+
     public Genome(final Genome genome){
         this.fitness = 0;
         this.order = new LinkedList<Integer>(genome.getOrder());

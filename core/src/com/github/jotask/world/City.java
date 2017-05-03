@@ -38,4 +38,6 @@ public class City {
 
     public Vector2 getPoint() { return point; }
 
+    public Color getColor() { return color; }
+
 }

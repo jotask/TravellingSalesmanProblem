@@ -16,6 +16,9 @@ import java.util.LinkedList;
  */
 public class Population {
 
+    private static final float CROSSOVER_RATE = .75f;
+    private static final float MUTATION_RATE  = 0.1f;
+
     // kimo loves you!
     private int POPULATION = 300;
 
@@ -65,24 +68,38 @@ public class Population {
         this.generation++;
         final LinkedList<Genome> childs = new LinkedList<Genome>();
         for(final Genome g: this.genes){
-            final Genome child = new Genome(g);
-            if(MathUtils.randomBoolean())
+            final Genome child;
+            if(MathUtils.random() < CROSSOVER_RATE){
+                final Genome father = selection();
+                child = crossover(g, father);
+            }else{
+                child = g;
+            }
+
+            if(MathUtils.random() < MUTATION_RATE)
                 child.mutate();
+
             childs.push(child);
+
         }
         this.genes.clear();
         this.genes.addAll(childs);
     }
 
+    public Genome selection(){
+        return this.genes.get(MathUtils.random(this.genes.size() - 1));
+    }
+
     public void render(final ShapeRenderer sr){
         sr.set(ShapeRenderer.ShapeType.Filled);
         {
-            sr.setColor(Color.RED);
             final LinkedList<Integer> order = this.always.getOrder();
             for (int i = 1; i < order.size(); i++) {
-                final Vector2 a = getCity(order.get(i - 1)).getPoint();
-                final Vector2 b = getCity(order.get(i)).getPoint();
-                sr.rectLine(a, b, 10);
+                final City a = getCity(order.get(i - 1));
+                final City b = getCity(order.get(i));
+                final Vector2 z = a.getPoint();
+                final Vector2 x = b.getPoint();
+                sr.rectLine(z.x, z.y, x.x, x.y, 15, a.getColor(), b.getColor());
             }
         }
 
@@ -97,7 +114,7 @@ public class Population {
         }
     }
 
-    private void crossover(Genome mother, Genome father){
+    private Genome crossover(Genome mother, Genome father){
 
         if(father.fitness < mother.fitness){
             final Genome tmp = mother;
@@ -106,9 +123,26 @@ public class Population {
         }
 
         final LinkedList<Integer> a = mother.getOrder();
-        final LinkedList<Integer> b = father.getOrder();
+        final LinkedList<Integer> b = mother.getOrder();
 
-        // TODO crossover
+        final LinkedList<Integer> child = new LinkedList<Integer>();
+        final int start = MathUtils.random(a.size() - 1);
+        final int end = MathUtils.random(start, a.size() - 1);
+        for(int i = start; i < end; i++)
+            child.push(a.get(i));
+
+        maiin: for(int i = 0; i < b.size(); i++){
+            int f = b.get(i);
+            for(int z = 0; z < child.size(); z++){
+               if(f == child.get(z))
+                  continue maiin;
+            }
+            child.push(f);
+        }
+
+        final double fitness = Math.max(mother.fitness, father.fitness);
+        final Genome c = new Genome(fitness, child);
+        return c;
 
     }
 
