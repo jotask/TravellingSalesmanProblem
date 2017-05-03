@@ -11,9 +11,9 @@ import java.util.LinkedList;
  * @author Jose Vives Iznardo
  * @since 01/05/2017
  */
-public class Fitness {
+class Fitness {
 
-    private LinkedList<City> cities;
+    private final LinkedList<City> cities;
 
     public Fitness(LinkedList<City> cities) {
         this.cities = cities;

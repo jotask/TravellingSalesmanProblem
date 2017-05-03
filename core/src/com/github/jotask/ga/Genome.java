@@ -13,7 +13,7 @@ import java.util.LinkedList;
  */
 public class Genome {
 
-    private LinkedList<Integer> order;
+    private final LinkedList<Integer> order;
 
     public double fitness;
 
@@ -29,11 +29,6 @@ public class Genome {
     public Genome(final double fitness, final LinkedList<Integer> order){
         this.fitness = fitness;
         this.order = order;
-    }
-
-    public Genome(final Genome genome){
-        this.fitness = 0;
-        this.order = new LinkedList<Integer>(genome.getOrder());
     }
 
     public void mutate(){

@@ -16,9 +16,9 @@ import java.util.LinkedList;
  */
 public class World {
 
-    private static int CITIES = 23;
+    private static final int CITIES = 23;
 
-    private LinkedList<City> cities;
+    private final LinkedList<City> cities;
 
     public World() {
         this.cities = new LinkedList<City>();
@@ -59,8 +59,7 @@ public class World {
 
         }
 
-        final City city = new City(id, p);
-        return city;
+        return new City(id, p);
     }
 
     public void render(final ShapeRenderer sr){

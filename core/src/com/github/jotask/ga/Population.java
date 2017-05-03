@@ -19,13 +19,10 @@ public class Population {
     private static final float CROSSOVER_RATE = .75f;
     private static final float MUTATION_RATE  = 0.1f;
 
-    // kimo loves you!
-    private int POPULATION = 300;
-
     private int generation;
-    private Fitness fitness;
+    private final Fitness fitness;
 
-    private LinkedList<Genome> genes;
+    private final LinkedList<Genome> genes;
 
     private Genome best;
 
@@ -42,6 +39,7 @@ public class Population {
     public void init(){
         this.generation = 0;
         this.genes.clear();
+        int POPULATION = 300;
         for(int i = 0; i < POPULATION; i++){
             final Genome genome = new Genome(this.cities);
             this.genes.push(genome);
@@ -59,7 +57,7 @@ public class Population {
         this.newGeneration();
     }
 
-    public void newGeneration(){
+    private void newGeneration(){
         if(this.always == null) {
             this.always = best;
         }else if(always.fitness > this.best.fitness){
@@ -86,7 +84,7 @@ public class Population {
         this.genes.addAll(childs);
     }
 
-    public Genome selection(){
+    private Genome selection(){
         return this.genes.get(MathUtils.random(this.genes.size() - 1));
     }
 
@@ -131,18 +129,17 @@ public class Population {
         for(int i = start; i < end; i++)
             child.push(a.get(i));
 
-        maiin: for(int i = 0; i < b.size(); i++){
-            int f = b.get(i);
-            for(int z = 0; z < child.size(); z++){
-               if(f == child.get(z))
-                  continue maiin;
+        maiin: for (Integer aB : b) {
+            int f = aB;
+            for (Integer aChild : child) {
+                if (f == aChild)
+                    continue maiin;
             }
             child.push(f);
         }
 
         final double fitness = Math.max(mother.fitness, father.fitness);
-        final Genome c = new Genome(fitness, child);
-        return c;
+        return new Genome(fitness, child);
 
     }
 

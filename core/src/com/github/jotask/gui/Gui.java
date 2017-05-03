@@ -16,7 +16,7 @@ import com.github.jotask.OptimusPrime;
 public class Gui {
 
     private final OptimusPrime prime;
-    final OrthographicCamera cam;
+    private final OrthographicCamera cam;
 
     public Gui(final OptimusPrime prime) {
         this.prime = prime;
@@ -43,8 +43,7 @@ public class Gui {
         for(int i = 0; i < n; i++)
             dec *= 10;
         int temp = (int)(number * dec);
-        double shortDouble = ((double)temp) / dec;
-        return shortDouble;
+        return ((double)temp) / dec;
     }
 
 }
