@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.github.jotask.world.City;
 import com.github.jotask.world.World;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 /**
@@ -17,8 +19,9 @@ import java.util.LinkedList;
  */
 public class Population {
 
+    private static final int POPULATION = 3;
     private static final float CROSSOVER_RATE = .75f;
-    private static final float MUTATION_RATE  = 0.1f;
+    static final float MUTATION_RATE  = 0.25f;
 
     private int generation;
     private final Fitness fitness;
@@ -46,7 +49,6 @@ public class Population {
         this.always = null;
         this.generation = 0;
         this.genes.clear();
-        int POPULATION = 300;
         for(int i = 0; i < POPULATION; i++){
             final Genome genome = new Genome(world.getCities());
             this.genes.push(genome);
@@ -70,29 +72,68 @@ public class Population {
         }else if(always.fitness > this.best.fitness){
             this.always = best;
         }
-        this.generation++;
+
+        Collections.sort(this.genes, new Comparator<Genome>() {
+            @Override
+            public int compare(Genome o1, Genome o2) {
+                if(o1.fitness < o2.fitness) return 1;
+                if(o1.fitness > o2.fitness) return -1;
+                return 0;
+            }
+        });
+        this.normalizeFitness();
+
         final LinkedList<Genome> childs = new LinkedList<Genome>();
         for(final Genome g: this.genes){
             final Genome child;
             if(MathUtils.random() < CROSSOVER_RATE){
-                final Genome father = selection();
+                final Genome father = poolSelection();
                 child = crossover(g, father);
             }else{
                 child = g;
-            }
-
-            if(MathUtils.random() < MUTATION_RATE)
                 child.mutate();
+            }
 
             childs.push(child);
 
         }
         this.genes.clear();
         this.genes.addAll(childs);
+
+        this.generation++;
+
     }
 
-    private Genome selection(){
-        return this.genes.get(MathUtils.random(this.genes.size() - 1));
+    void printo(){
+        StringBuilder sb = new StringBuilder();
+        for(final Genome g: this.genes){
+            sb.append( ((float)g.fitness) + " : ");
+        }
+        System.out.println(sb.toString());
+    }
+
+    private void normalizeFitness(){
+        double sum = 0.0;
+        for(final Genome g: this.genes){
+            sum += g.fitness;
+        }
+        for(final Genome g: this.genes){
+            g.probability = g.fitness / sum;
+        }
+    }
+
+    private Genome poolSelection(){
+
+        int index = 0;
+        double r = MathUtils.random();
+
+        while(r > 0){
+            r = r - this.genes.get(index).probability;
+            index++;
+        }
+        index--;
+        return this.genes.get(index);
+
     }
 
     public void render(final ShapeRenderer sr){

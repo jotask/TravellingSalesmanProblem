@@ -5,6 +5,8 @@ import com.github.jotask.world.City;
 
 import java.util.LinkedList;
 
+import static com.github.jotask.ga.Population.MUTATION_RATE;
+
 /**
  * Genome
  *
@@ -16,9 +18,11 @@ public class Genome {
     private final LinkedList<Integer> order;
 
     public double fitness;
+    public double probability;
 
     public Genome(final LinkedList<City> cities) {
-        this.fitness = 0;
+        this.fitness = 0.0;
+        this.probability = 0.0;
         this.order = new LinkedList<Integer>();
         for(int i = 0; i < cities.size(); i++){
             this.order.push(i);
@@ -32,9 +36,13 @@ public class Genome {
     }
 
     public void mutate(){
-        final int i = MathUtils.random(order.size() - 1);
-        final int j = MathUtils.random(order.size() - 1);
-        swap(i, j);
+        for(int i = 0; i < this.order.size(); i++){
+            if(MathUtils.random() < MUTATION_RATE) {
+                final int a = MathUtils.random(order.size() - 1);
+                final int b = (a + 1) % this.order.size();
+                swap(a, b);
+            }
+        }
     }
 
     private void shuffle(final int n){
