@@ -36,6 +36,10 @@ public class Population {
         this.fitness = new Fitness(this.cities);
     }
 
+    public void reset(){
+        init();
+    }
+
     public void init(){
         this.generation = 0;
         this.genes.clear();

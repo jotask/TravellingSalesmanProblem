@@ -1,10 +1,11 @@
 package com.github.jotask.world;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.github.jotask.OptimusPrime;
 
 import java.util.LinkedList;
 
@@ -17,11 +18,17 @@ import java.util.LinkedList;
 public class World {
 
     private static final int CITIES = 23;
+    private final OptimusPrime prime;
 
     private final LinkedList<City> cities;
 
-    public World() {
+    public World(final OptimusPrime prime) {
+        this.prime = prime;
         this.cities = new LinkedList<City>();
+    }
+
+    public void reset(){
+        this.cities.clear();
         for(int i = 0; i < CITIES; i++){
             final City city = getCity(i);
             cities.push(city);
@@ -29,8 +36,10 @@ public class World {
     }
 
     private City getCity(final int id){
-        final float WEIGHT = Gdx.graphics.getWidth();
-        final float HEIGHT = Gdx.graphics.getHeight();
+
+        final OrthographicCamera cam = this.prime.getCam();
+        final float WEIGHT = cam.viewportWidth;
+        final float HEIGHT = cam.viewportHeight;
 
         final Vector2 p = new Vector2();
 
